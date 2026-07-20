@@ -43,7 +43,7 @@
     font:inherit;font-weight:500;padding:8px 14px;cursor:pointer;border-radius:999px;
   }
   nav.kg button:hover{opacity:1;background:#F8E9D3}
-  nav.kg button.on{opacity:1;background:var(--ai);color:#fff}
+  nav.kg button.on{opacity:1;background:transparent;color:var(--ai);font-weight:700;box-shadow:inset 0 -2px 0 var(--ai);border-radius:8px 8px 0 0}
   .login-btn{
     font:inherit;font-weight:700;cursor:pointer;font-size:.85rem;
     border-radius:999px;padding:7px 18px;
@@ -116,11 +116,42 @@
   section.blk>h2{font-size:1.25rem;letter-spacing:.1em;color:var(--ai);margin-bottom:16px;border-left:5px solid var(--yamabuki);padding-left:12px}
 
   /* ===== 募集カード ===== */
-  .filters{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 18px}
+  .filters{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin:8px 0 16px;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
   .filters select{
-    font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);
-    background:var(--paper);color:var(--sumi);
+    -webkit-appearance:none;appearance:none;flex:none;
+    font:inherit;font-size:.85rem;cursor:pointer;
+    padding:7px 30px 7px 15px;border-radius:999px;border:1.5px solid var(--line);
+    background:var(--paper) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23A18868' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+    color:#5A4634;max-width:11em;overflow:hidden;text-overflow:ellipsis;
   }
+  .filters select.sel{
+    background-color:var(--ai);border-color:var(--ai);color:#fff;font-weight:700;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .list-head{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:12px}
+  .list-head select{font:inherit;font-size:.8rem;padding:5px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:#6E5843}
+  .qchips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin-top:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .qchips::-webkit-scrollbar{display:none}
+  .qchip{flex:none;font:inherit;font-size:.85rem;cursor:pointer;border-radius:999px;padding:7px 16px;background:var(--paper);border:1.5px solid var(--line);color:#5A4634}
+  .qchip.on{background:var(--ai);border-color:var(--ai);color:#fff;font-weight:700}
+  .pop-ov{position:fixed;inset:0;z-index:59}
+  .pop{
+    position:fixed;z-index:60;background:var(--paper);border:1px solid var(--line);
+    border-radius:14px;box-shadow:0 12px 30px rgba(60,30,10,.22);
+    max-height:50vh;overflow:auto;min-width:190px;padding:6px;
+  }
+  .pop button{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:none;border:none;font:inherit;font-size:.9rem;
+    padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--sumi);
+  }
+  .pop button:hover{background:var(--washi)}
+  .pop .r{width:18px;height:18px;border:2px solid var(--line);border-radius:50%;flex:none;position:relative}
+  .pop button.sel{color:var(--ai);font-weight:700}
+  .pop button.sel .r{border-color:var(--ai)}
+  .pop button.sel .r::after{content:"";position:absolute;inset:3px;background:var(--ai);border-radius:50%}
+  .kg-app.graybg{background:#F5F4F2}
   .bosyu-list{display:grid;gap:14px}
   .bosyu{
     background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
@@ -377,17 +408,17 @@
         <div class="s3">
           <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="16" width="38" height="28" rx="4"/><circle cx="17" cy="27" r="4.5"/><path d="M10.5 38q6.5-5.5 13 0M30 24h9M30 31h7"/><path d="M42 44l11-11 5 5-11 11-6 1z"/></svg>
           <b>1. ニックネームで登録</b>
-          <p>本名・連絡先の公開は不要。ニックネームだけでOK。</p>
+          <p>本名・連絡先の公開は不要。<br>ニックネームだけでOK。</p>
         </div>
         <div class="s3">
           <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 28l4-11h24l4 11M10 28v22h28V28M8 28h32M18 50V38h12v12"/><path d="M50 6a8 8 0 0 1 8 8c0 6-8 13-8 13s-8-7-8-13a8 8 0 0 1 8-8z"/><circle cx="50" cy="14" r="2.6"/></svg>
           <b>2. お店を選んで募集・参加</b>
-          <p>行きたい募集に手を挙げるか、自分から募集。</p>
+          <p>行きたい募集に手を挙げるか、<br>自分から募集。</p>
         </div>
         <div class="s3">
           <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="16" cy="20" r="5.5"/><circle cx="48" cy="20" r="5.5"/><path d="M7 42q9-9 18 0M39 42q9-9 18 0"/><path d="M26 36h12M32 36v12M26 52h12"/></svg>
           <b>3. みんなで食事!</b>
-          <p>当日はお店の前で集合。美味しいごはんを仲間と楽しみましょう。</p>
+          <p>当日はお店の前で集合。<br>美味しいごはんを仲間と楽しみましょう。</p>
         </div>
       </div>
 
@@ -437,21 +468,15 @@
     <div class="page" id="page-list">
       <section class="blk">
         <h2>募集をさがす</h2>
-        <div class="filters">
-          <select id="f-area"><option value="">エリア:すべて</option></select>
-          <select id="f-genre"><option value="">ジャンル:すべて</option></select>
-          <select id="f-size">
-            <option value="">人数:すべて</option>
-            <option value="1">あと1名(2人で行く)</option>
-            <option value="2+">あと2名以上</option>
-          </select>
-          <select id="f-budget">
-            <option value="">予算:すべて</option>
-            <option>〜3,000円</option>
-            <option>3,000〜5,000円</option>
-            <option>5,000円〜</option>
+        <div class="list-head">
+          <select id="f-sort" aria-label="並び替え">
+            <option value="new">新着順</option>
+            <option value="date">開催日が近い順</option>
+            <option value="budget">予算が安い順</option>
           </select>
         </div>
+        <p class="hint2" style="margin-top:6px">タグをタップすると選択肢が開きます。「すべて」で条件をクリア。</p>
+        <div class="qchips" id="qchips" style="margin-bottom:12px"></div>
         <div class="bosyu-list" id="bosyu-list"></div>
       </section>
     </div>
@@ -751,6 +776,7 @@
     pages.forEach(p=>p.classList.toggle('on',p.id==='page-'+id));
     const navId=(id==='detail')?'list':id;
     navBtns.forEach(b=>b.classList.toggle('on',b.dataset.page===navId));
+    document.querySelector('.kg-app').classList.toggle('graybg',id==='list');
     window.scrollTo({top:0,behavior:'auto'});
   }
   navBtns.forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
@@ -765,10 +791,44 @@
   chips(document.getElementById('p-genre'),GENRES,'checkbox');
   chips(document.getElementById('p-area'),AREAS,'checkbox');
 
-  // フィルタ選択肢
-  const fa=document.getElementById('f-area'),fg=document.getElementById('f-genre'),fs=document.getElementById('f-size'),fb=document.getElementById('f-budget');
-  AREAS.forEach(a=>fa.insertAdjacentHTML('beforeend','<option>'+a+'</option>'));
-  GENRES.forEach(g=>fg.insertAdjacentHTML('beforeend','<option>'+g+'</option>'));
+  // 絞り込みタグ(カテゴリごとに1つ。タップでラジオが開き、選ぶと即反映)
+  const fsort=document.getElementById('f-sort');
+  const SLOTS=[
+    {k:'size',  v:null, def:'1',         name:'2人で行く'},
+    {k:'budget',v:null, def:'〜3,000円',  name:'〜3,000円'},
+    {k:'genre', v:null, def:'カフェ・喫茶', name:'カフェ・喫茶'},
+    {k:'area',  v:null, def:'梅田',       name:'梅田'}
+  ];
+  const OPTS={
+    size:[{v:'1',t:'2人で行く(あと1名)'},{v:'2+',t:'3人以上で行く'}],
+    budget:['〜3,000円','3,000〜5,000円','5,000円〜'].map(x=>({v:x,t:x})),
+    genre:GENRES.map(x=>({v:x,t:x})),
+    area:AREAS.map(x=>({v:x,t:x}))
+  };
+  const dispV=v=>v==='1'?'2人で行く':v==='2+'?'3人以上':v;
+  function clearF(){SLOTS.forEach(s=>s.v=null);}
+  let popEl=null,ovEl=null;
+  function closePicker(){if(popEl){popEl.remove();ovEl.remove();popEl=ovEl=null;}}
+  function openPicker(slot,anchor){
+    closePicker();
+    const cur=slot.v||slot.def;
+    ovEl=document.createElement('div');ovEl.className='pop-ov';ovEl.onclick=closePicker;
+    popEl=document.createElement('div');popEl.className='pop';
+    popEl.innerHTML=[{v:'',t:'指定なし(解除)'}].concat(OPTS[slot.k])
+      .map(o=>'<button class="'+(o.v===cur?'sel':'')+'" data-v="'+o.v+'"><span class="r"></span>'+o.t+'</button>').join('');
+    popEl.addEventListener('click',e=>{
+      const b=e.target.closest('button'); if(!b)return;
+      slot.v=b.dataset.v||null;
+      closePicker(); render();
+    });
+    document.body.appendChild(ovEl); document.body.appendChild(popEl);
+    const r=anchor.getBoundingClientRect();
+    let top=r.bottom+6;
+    if(top+popEl.offsetHeight>innerHeight-10)top=Math.max(10,innerHeight-popEl.offsetHeight-10);
+    let left=r.left;
+    if(left+popEl.offsetWidth>innerWidth-10)left=innerWidth-popEl.offsetWidth-10;
+    popEl.style.top=top+'px'; popEl.style.left=Math.max(10,left)+'px';
+  }
 
   // ジャンル→イラスト対応
   const ICON={'焼き鳥':'i-yakitori','焼肉':'i-yakiniku','寿司':'i-sushi','ラーメン':'i-ramen','うどん・そば':'i-udon','居酒屋':'i-izakaya','イタリアン':'i-italian','エスニック':'i-ethnic','カフェ・喫茶':'i-cafe','スイーツ':'i-sweets','その他':'i-other'};
@@ -799,22 +859,51 @@
   const list=document.getElementById('bosyu-list');
   const newList=document.getElementById('new-bosyu');
   function renderNew(){ newList.innerHTML=BOSYU.slice(0,3).map(cardHTML).join(''); }
+  const qwrap=document.getElementById('qchips');
+  function renderTags(){
+    const none=SLOTS.every(s=>!s.v);
+    qwrap.innerHTML='<button class="qchip'+(none?' on':'')+'" data-all="1">すべて</button>'+
+      SLOTS.map((s,i)=>'<button class="qchip'+(s.v?' on':'')+'" data-i="'+i+'">'+(s.v?dispV(s.v):s.name)+' ▾</button>').join('');
+  }
   function render(){
-    const a=fa.value,g=fg.value,s=fs.value,bu=fb.value;
+    const sel={size:null,budget:null,genre:null,area:null};
+    SLOTS.forEach(s=>{if(s.v)sel[s.k]=s.v;});
+    // 府県を選んだら配下のエリアもすべて対象にする
+    const PREF={
+      '大阪':['大阪','梅田','難波・心斎橋','天満','福島','京橋'],
+      '兵庫':['兵庫','三宮','元町'],
+      '京都':['京都','河原町','烏丸','伏見']
+    };
+    const areaOK=b=>!sel.area||(PREF[sel.area]?PREF[sel.area].includes(b.area):b.area===sel.area);
     const rows=BOSYU.filter(b=>
-      (!a||b.area===a)&&(!g||b.genre===g)&&(!bu||b.budget===bu)&&
-      (!s|| (s==='1'?b.size==='あと1名':b.size!=='あと1名'))
+      areaOK(b)&&
+      (!sel.genre||b.genre===sel.genre)&&
+      (!sel.budget||b.budget===sel.budget)&&
+      (!sel.size||(sel.size==='1'?b.size==='あと1名':b.size!=='あと1名'))
     );
+    // 並び替え
+    const bRank={'〜3,000円':0,'3,000〜5,000円':1,'5,000円〜':2};
+    const dk=b=>{const m=(b.d||'').match(/(\d+)\s*\/\s*(\d+)/);return m?(+m[1])*100+(+m[2]):9999;};
+    const sort=fsort.value;
+    if(sort==='date')rows.sort((x,y)=>dk(x)-dk(y));
+    else if(sort==='budget')rows.sort((x,y)=>(bRank[x.budget]??9)-(bRank[y.budget]??9));
+    else rows.sort((x,y)=>(y.id||0)-(x.id||0));
+    renderTags();
     renderNew();
     if(!rows.length){list.innerHTML='<div class="empty">条件に合う募集がまだありません。<br>「募集をつくる」から最初の一件を出してみませんか?</div>';return;}
     list.innerHTML=rows.map(cardHTML).join('');
   }
-  [fa,fg,fs,fb].forEach(el=>el.addEventListener('change',render));
+  fsort.addEventListener('change',render);
+  qwrap.addEventListener('click',e=>{
+    const c=e.target.closest('.qchip'); if(!c)return;
+    if(c.dataset.all){clearF();closePicker();render();return;}
+    openPicker(SLOTS[+c.dataset.i],c);
+  });
   render();
 
   // ギャラリー → 募集一覧へ絞り込み遷移
   document.querySelectorAll('.gallery .g').forEach(t=>t.addEventListener('click',()=>{
-    fg.value=t.dataset.genre; fa.value=''; fs.value=''; fb.value='';
+    clearF(); SLOTS[2].v=t.dataset.genre;
     render(); go('list');
   }));
 
