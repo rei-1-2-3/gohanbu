@@ -7,6 +7,277 @@
 <meta name="description" content="京都・大阪・神戸の飲食店に一緒に行く仲間を募集。本名・連絡先は不要、ニックネームだけで参加できます。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ai:#E4611F;        /* 柿オレンジ primary */
+    --ai-deep:#C24A12;
+    --yamabuki:#F5B63F;  /* 山吹 gold accent */
+    --washi:#FBF1E1;     /* クリーム background */
+    --paper:#FFFDF8;
+    --sumi:#38271A;      /* 焦げ茶 text */
+    --hai:#A18868;       /* muted */
+    --line:#F0DBC0;
+    --radius:14px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  .kg-app{
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    background:var(--washi);color:var(--sumi);
+    min-height:100vh; line-height:1.7;
+  }
+  .kg-app h1,.kg-app h2,.kg-app h3,.disp{font-family:'Shippori Mincho',serif}
+
+  /* ===== ヘッダー ===== */
+  header.kg{
+    background:rgba(255,253,248,.95);color:var(--sumi);
+    border-bottom:1px solid var(--line);
+    padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    position:sticky;top:0;z-index:20;
+  }
+  .logo{font-family:'Shippori Mincho',serif;font-weight:800;font-size:1.25rem;letter-spacing:.08em;color:var(--ai)}
+  .logo small{display:block;font-family:'Zen Kaku Gothic New',sans-serif;font-weight:500;font-size:.65rem;letter-spacing:.25em;color:var(--hai)}
+  nav.kg{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+  nav.kg button{
+    background:transparent;border:none;color:var(--sumi);opacity:.72;
+    font:inherit;font-weight:500;padding:8px 14px;cursor:pointer;border-radius:999px;
+  }
+  nav.kg button:hover{opacity:1;background:#F8E9D3}
+  nav.kg button.on{opacity:1;background:transparent;color:var(--ai);font-weight:700;box-shadow:inset 0 -2px 0 var(--ai);border-radius:8px 8px 0 0}
+  .login-btn{
+    font:inherit;font-weight:700;cursor:pointer;font-size:.85rem;
+    border-radius:999px;padding:7px 18px;
+    border:1.5px solid var(--ai);background:#FFFDF8;color:var(--ai);
+  }
+  .login-btn:hover{background:#FBEAD8}
+  nav.kg button:focus-visible,.kg-app button:focus-visible,.kg-app input:focus-visible,.kg-app select:focus-visible,.kg-app textarea:focus-visible{
+    outline:2px solid var(--yamabuki);outline-offset:2px;
+  }
+
+  main.kg{max-width:920px;margin:0 auto;padding:0 20px 72px}
+  .page{display:none}
+  .page.on{display:block;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.page.on{animation:none}}
+
+  /* ===== 暖簾ヒーロー ===== */
+  .noren{
+    position:relative;margin:0 -20px;padding:0;text-align:center;color:#fff;
+    border-radius:0 0 var(--radius) var(--radius);overflow:hidden;
+  }
+  .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero-shade{position:absolute;inset:0;background:linear-gradient(rgba(28,16,8,.38),rgba(28,16,8,.62))}
+  .hero-inner{position:relative;z-index:1;padding:76px 24px 64px;max-width:780px;margin:0 auto}
+  .steps3{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:30px 22px;margin-top:26px;text-align:center;
+  }
+  .s3 svg{width:56px;height:56px;stroke:var(--ai);fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:10px}
+  .s3 b{display:block;font-family:'Shippori Mincho',serif;font-size:1rem;color:var(--sumi);margin-bottom:6px}
+  .s3 p{font-size:.82rem;color:#6E5843}
+  .noren-slits{display:flex;justify-content:center;gap:10px;margin-top:44px}
+  .noren-slits span{
+    display:block;width:64px;height:56px;background:var(--washi);
+    border-radius:0 0 6px 6px;
+  }
+  .noren h1{font-size:clamp(1.9rem,5.5vw,3rem);font-weight:800;letter-spacing:.1em;line-height:1.5;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.35)}
+  .noren h1 em{font-style:normal;color:#FF8A3D}
+  .noren .sub{margin-top:16px;font-size:1rem;color:#FFF3E6;letter-spacing:.06em;font-weight:700;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+  .hero-cta{margin-top:28px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-dark{background:rgba(30,18,10,.35);color:#fff;border:1.5px solid var(--yamabuki)}
+  .btn-dark:hover{background:rgba(255,255,255,.14)}
+  .btn{
+    font:inherit;font-weight:700;cursor:pointer;border-radius:999px;
+    padding:12px 28px;border:none;letter-spacing:.05em;
+  }
+  .btn-gold{background:var(--yamabuki);color:var(--ai-deep)}
+  .btn-gold:hover{filter:brightness(1.06)}
+  .btn-ghost{background:#FFFDF8;color:var(--ai);border:1.5px solid var(--ai)}
+  .btn-ghost:hover{background:#FBEAD8}
+  .btn-ai{background:var(--ai);color:#fff}
+  .btn-ai:hover{background:var(--ai-deep)}
+
+  /* ===== 安心3点 ===== */
+  .anshin{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:34px 0}
+  .anshin .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 20px;
+  }
+  .anshin .card b{display:block;font-family:'Shippori Mincho',serif;font-size:1.02rem;margin-bottom:6px;color:var(--ai)}
+  .anshin .card p{font-size:.86rem;color:#555}
+  .step{display:flex;gap:14px;align-items:flex-start;margin-top:10px}
+  .step .n{
+    flex:none;width:34px;height:34px;border-radius:50%;
+    background:var(--ai);color:#fff;display:grid;place-items:center;
+    font-family:'Shippori Mincho',serif;font-weight:700;
+  }
+  section.blk{margin-top:44px}
+  section.blk>h2{font-size:1.25rem;letter-spacing:.1em;color:var(--ai);margin-bottom:16px;border-left:5px solid var(--yamabuki);padding-left:12px}
+
+  /* ===== 募集カード ===== */
+  .filters{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin:8px 0 16px;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .filters select{
+    -webkit-appearance:none;appearance:none;flex:none;
+    font:inherit;font-size:.85rem;cursor:pointer;
+    padding:7px 30px 7px 15px;border-radius:999px;border:1.5px solid var(--line);
+    background:var(--paper) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23A18868' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+    color:#5A4634;max-width:11em;overflow:hidden;text-overflow:ellipsis;
+  }
+  .filters select.sel{
+    background-color:var(--ai);border-color:var(--ai);color:#fff;font-weight:700;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .list-head{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:12px}
+  .list-head select{font:inherit;font-size:.8rem;padding:5px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:#6E5843}
+  .qchips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;margin-top:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .qchips::-webkit-scrollbar{display:none}
+  .qchip{flex:none;font:inherit;font-size:.85rem;cursor:pointer;border-radius:999px;padding:7px 16px;background:var(--paper);border:1.5px solid var(--line);color:#5A4634}
+  .qchip.on{background:var(--ai);border-color:var(--ai);color:#fff;font-weight:700}
+  .pop-ov{position:fixed;inset:0;z-index:59}
+  .pop{
+    position:fixed;z-index:60;background:var(--paper);border:1px solid var(--line);
+    border-radius:14px;box-shadow:0 12px 30px rgba(60,30,10,.22);
+    max-height:50vh;overflow:auto;min-width:190px;padding:6px;
+  }
+  .pop button{
+    display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+    background:none;border:none;font:inherit;font-size:.9rem;
+    padding:10px 12px;border-radius:10px;cursor:pointer;color:var(--sumi);
+  }
+  .pop button:hover{background:var(--washi)}
+  .pop .r{width:18px;height:18px;border:2px solid var(--line);border-radius:50%;flex:none;position:relative}
+  .pop button.sel{color:var(--ai);font-weight:700}
+  .pop button.sel .r{border-color:var(--ai)}
+  .pop button.sel .r::after{content:"";position:absolute;inset:3px;background:var(--ai);border-radius:50%}
+  .kg-app.graybg{background:#F5F4F2}
+  .bosyu-list{display:grid;gap:14px}
+  .bosyu{
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  }
+  .bosyu .date{
+    flex:none;text-align:center;background:var(--washi);border:1px solid var(--line);
+    border-radius:10px;padding:8px 12px;min-width:74px;
+  }
+  .bosyu .date b{display:block;font-family:'Shippori Mincho',serif;font-size:1.05rem;color:var(--ai)}
+  .bosyu .date span{font-size:.72rem;color:var(--hai)}
+  .bosyu .body{flex:1;min-width:220px}
+  .bosyu .body h3{font-size:1.02rem;margin-bottom:4px}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;font-size:.74rem}
+  .tag{border-radius:999px;padding:2px 10px;background:var(--washi);border:1px solid var(--line);color:#555}
+  .tag.ai{background:var(--ai);border-color:var(--ai);color:#fff}
+  .tag.gold{background:#FBF0DC;border-color:#EED3A0;color:#8A5B12;font-weight:700}
+  .bosyu .join{flex:none}
+  .empty{padding:36px;text-align:center;color:var(--hai);background:var(--paper);border:1px dashed var(--line);border-radius:var(--radius)}
+  .bosyu .body h3{cursor:pointer}
+  .bosyu .body h3:hover{color:var(--ai);text-decoration:underline}
+
+  /* ===== 募集詳細 ===== */
+  .d-wrap{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-top:18px}
+  .d-head{display:flex;gap:16px;align-items:center;margin:18px 0 6px;flex-wrap:wrap}
+  .thumb.big{width:84px;height:84px}
+  .thumb.big svg{width:60px;height:60px}
+  .d-head h3{font-size:1.2rem;margin-bottom:6px}
+  .d-info{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:16px 0;font-size:.92rem}
+  .d-info dt{color:var(--hai);font-weight:700}
+  .d-info dd{margin:0}
+  .d-note{background:var(--washi);border-radius:10px;padding:12px 14px;font-size:.9rem}
+  .d-sub{font-family:'Shippori Mincho',serif;color:var(--ai);margin:22px 0 10px;font-size:1rem}
+  .c-list{display:grid;gap:10px}
+  .c-item{background:var(--washi);border-radius:12px;padding:10px 14px;font-size:.9rem}
+  .c-item b{color:var(--ai-deep);font-size:.82rem;display:block;margin-bottom:2px}
+  .hint2{font-size:.85rem;color:var(--hai)}
+  .c-form{margin-top:12px;display:grid;gap:8px;justify-items:start}
+  .c-form textarea{width:100%}
+  .report{background:none;border:none;color:var(--hai);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+  .c-reply{margin:8px 0 0 18px;border-left:3px solid var(--line);padding:6px 12px;background:#FFFDF8;border-radius:0 10px 10px 0;font-size:.88rem}
+  .c-reply b{color:var(--ai-deep);font-size:.8rem;display:block;margin-bottom:2px}
+  .reply-btn{background:none;border:none;color:var(--ai);font:inherit;font-size:.78rem;cursor:pointer;padding:6px 0 0;text-decoration:underline}
+  .c-item.dm{background:#FBF0DC}
+  .pend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+  .tag.closed{background:#E9E2D4;border-color:#D8CEBB;color:#8A8070;font-weight:700}
+  .tag.p-link{cursor:pointer}
+  .tag.p-link:hover{border-color:var(--ai);box-shadow:0 0 0 2px #F8E3CB}
+  .c-item b.p-link{cursor:pointer;text-decoration:underline dotted}
+  .pmodal{position:fixed;inset:0;background:rgba(56,39,26,.45);display:grid;place-items:center;z-index:50;padding:20px}
+  .pmodal[hidden]{display:none}
+  .pmodal-card{background:var(--paper);border-radius:var(--radius);padding:26px 24px;max-width:420px;width:100%;position:relative;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+  .pmodal-close{position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--hai)}
+  .pmodal-card h3{font-family:'Shippori Mincho',serif;color:var(--ai);margin-bottom:12px;padding-right:24px}
+
+  /* ===== フォーム ===== */
+  form.kg{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;margin-top:22px;display:grid;gap:20px}
+  .f-row{display:grid;gap:6px}
+  .f-row>label{font-weight:700;font-size:.9rem}
+  .f-row .hint{font-size:.76rem;color:var(--hai)}
+  .kg input[type=text],.kg input[type=password],.kg select,.kg textarea{
+    font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+    background:var(--washi);width:100%;
+  }
+  .kg textarea{resize:vertical;min-height:76px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{cursor:pointer}
+  .chip input{position:absolute;opacity:0;pointer-events:none}
+  .chip span{
+    display:inline-block;padding:7px 15px;border-radius:999px;font-size:.85rem;
+    background:var(--washi);border:1.5px solid var(--line);user-select:none;
+  }
+  .chip input:checked+span{background:var(--ai);border-color:var(--ai);color:#fff}
+  .chip input:focus-visible+span{outline:2px solid var(--yamabuki);outline-offset:2px}
+  .agree{
+    background:#FBF7EC;border:1.5px solid #EAD9AE;border-radius:12px;padding:16px;
+    display:flex;gap:10px;align-items:flex-start;font-size:.9rem;
+  }
+  .agree input{width:20px;height:20px;margin-top:3px;accent-color:var(--ai);flex:none;cursor:pointer}
+  .agree a{color:var(--ai);font-weight:700}
+  .form-msg{font-size:.85rem;font-weight:700;min-height:1.2em}
+  .form-msg.ok{color:#1D6B3C}.form-msg.ng{color:#A33B2E}
+
+  /* ===== 免責・フッター ===== */
+  .kiyaku{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:24px;font-size:.86rem;color:#444;display:grid;gap:12px}
+  .kiyaku h3{color:var(--ai);font-size:1rem}
+  .kiyaku ul{padding-left:1.2em;display:grid;gap:6px}
+  footer.kg{margin-top:56px;background:var(--ai-deep);color:rgba(255,255,255,.75);font-size:.78rem;text-align:center;padding:22px}
+  footer.kg button{background:none;border:none;color:var(--yamabuki);font:inherit;cursor:pointer;text-decoration:underline}
+
+  /* ===== 料理イラスト ===== */
+  .thumb{
+    flex:none;width:66px;height:66px;border-radius:50%;
+    background:#FDF8EE;border:1px solid var(--line);
+    display:grid;place-items:center;
+  }
+  .thumb svg{width:48px;height:48px}
+  .hero-dishes{display:flex;justify-content:center;gap:16px;margin-top:30px;flex-wrap:wrap}
+  .hero-dishes .d{
+    width:78px;height:78px;border-radius:50%;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);
+    display:grid;place-items:center;
+  }
+  .hero-dishes .d svg{width:54px;height:54px}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:12px}
+  .gallery .g{
+    font:inherit;cursor:pointer;
+    background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 8px 12px;text-align:center;transition:transform .15s ease,border-color .15s ease;
+  }
+  .gallery .g:hover{transform:translateY(-3px);border-color:var(--yamabuki)}
+  @media (prefers-reduced-motion:reduce){.gallery .g:hover{transform:none}}
+  .gallery .g svg{width:62px;height:62px}
+  .gallery .g b{display:block;font-size:.78rem;margin-top:6px;color:var(--ai);font-weight:700}
+
+  @media(max-width:560px){
+    .noren-slits span{width:44px;height:44px}
+    .hero-dishes .d{width:64px;height:64px}
+    .hero-dishes .d svg{width:44px;height:44px}
+    .thumb{width:56px;height:56px}
+    .thumb svg{width:40px;height:40px}
+    .bosyu .join{width:100%}
+    .bosyu .join .btn{width:100%}
+  }
+  html{-webkit-text-size-adjust:100%}
+</style>
 </head>
 <body>
 
@@ -106,15 +377,13 @@
 
   <header class="kg">
     <div class="logo">京阪神ごはん部<small>KEIHANSHIN GOHAN-BU</small></div>
-    <span class="auth-nick" id="auth-nickname" hidden></span>
-    <button class="login-btn" id="auth-nav-btn" data-go="auth">ログイン</button>
+    <button class="login-btn" data-go="auth">ログイン</button>
     <nav class="kg" aria-label="メインメニュー">
       <button class="on" data-page="top">トップ</button>
       <button data-page="list">募集をさがす</button>
       <button data-page="create">募集をつくる</button>
       <button data-page="profile">プロフィール</button>
       <button data-page="rules">規約・免責</button>
-      <button data-page="admin" id="nav-admin" hidden>管理</button>
     </nav>
   </header>
 
@@ -239,13 +508,8 @@
             <div class="chips" id="c-genre"></div>
           </div>
           <div class="f-row">
-            <label for="c-event-date">開催日</label>
-            <input type="date" id="c-event-date">
-            <span class="hint">この日を過ぎると自動的に「募集終了(開催済み)」になり、新たな参加表明を締め切ります。</span>
-          </div>
-          <div class="f-row">
-            <label for="c-date">時間帯・集合時間など(任意)</label>
-            <input type="text" id="c-date" placeholder="例)19時ごろ〜">
+            <label for="c-date">日どり・時間帯</label>
+            <input type="text" id="c-date" placeholder="例)7/31(金) 19時ごろ〜">
           </div>
           <div class="f-row">
             <label>募集人数</label>
@@ -322,7 +586,7 @@
           </div>
           <div class="f-row">
             <label>参加しやすい曜日・時間帯(いくつでも)</label>
-            <div class="chips" id="p-slots">
+            <div class="chips">
               <label class="chip"><input type="checkbox" value="平日昼"><span>平日昼</span></label>
               <label class="chip"><input type="checkbox" value="平日夜"><span>平日夜</span></label>
               <label class="chip"><input type="checkbox" value="土日昼"><span>土日昼</span></label>
@@ -360,20 +624,13 @@
             <textarea id="p-intro" maxlength="100" placeholder="例)出汁のきいたうどんに目がありません。"></textarea>
             <span class="hint">100文字まで。連絡先やSNSのIDは書かないでください。</span>
           </div>
+          <div class="agree">
+            <input type="checkbox" id="p-age18">
+            <label for="p-age18">私は<b>18歳以上</b>です。<a href="#" data-go="rules">利用規約・免責事項</a>を読み、同意します。虚偽の申告が判明した場合、登録が削除されることを了承します。</label>
+          </div>
           <div class="form-msg" id="p-msg" role="status"></div>
           <div><button type="button" class="btn btn-ai" id="p-submit">この内容で登録する</button></div>
         </form>
-        <div id="p-mypage" hidden style="margin-top:32px;padding-top:20px;border-top:1px solid #E5DFCF">
-          <h3>マイページ</h3>
-          <h4 style="margin-top:12px">主催している募集</h4>
-          <div id="my-hosted-list"></div>
-          <h4 style="margin-top:18px">参加予定・応募中の募集</h4>
-          <div id="my-joined-list"></div>
-        </div>
-        <div id="p-withdraw-block" hidden style="margin-top:32px;padding-top:20px;border-top:1px solid #E5DFCF">
-          <button type="button" class="btn btn-ghost" id="p-withdraw" style="color:#B23A2B">退会する</button>
-          <div class="form-msg" id="p-withdraw-msg" role="status"></div>
-        </div>
       </section>
     </div>
 
@@ -389,16 +646,12 @@
           </div>
           <div class="f-row">
             <label for="l-pass">パスワード</label>
-            <input type="password" id="l-pass" placeholder="8文字以上" autocomplete="off">
-          </div>
-          <div class="agree">
-            <input type="checkbox" id="l-remember">
-            <label for="l-remember">ログイン情報を保持する(メールアドレスのみ。パスワードは保存されません)</label>
+            <input type="password" id="l-pass" placeholder="8文字以上">
           </div>
           <div class="form-msg" id="l-msg" role="status"></div>
           <div>
             <button type="button" class="btn btn-ai" id="l-submit">ログイン</button>
-            <button type="button" class="report" id="l-reset">パスワードを忘れた方</button>
+            <button type="button" class="report" onclick="alert('(デモ)登録メールアドレスに再設定用のリンクを送ります。')">パスワードを忘れた方</button>
           </div>
         </form>
       </section>
@@ -459,15 +712,6 @@
       </section>
     </div>
 
-    <!-- ============ 管理画面(is_admin限定・閲覧専用) ============ -->
-    <div class="page" id="page-admin">
-      <section class="blk">
-        <h2>管理画面</h2>
-        <p class="hint2">運営(is_admin)専用の閲覧画面です。不正監視が目的で、現時点では閲覧のみです。</p>
-        <div id="admin-body"><p class="hint2">読み込み中...</p></div>
-      </section>
-    </div>
-
   </main>
 
   <div class="pmodal" id="pmodal" hidden onclick="_kgProfClose()">
@@ -485,6 +729,362 @@
   </footer>
 </div>
 
-<script type="module" src="/src/main.js"></script>
+<script>
+(function(){
+  const AREAS=['大阪','兵庫','京都','梅田','難波・心斎橋','天満','福島','京橋','三宮','元町','河原町','烏丸','伏見'];
+  const GENRES=['焼き鳥','焼肉','寿司','ラーメン','うどん・そば','居酒屋','イタリアン','エスニック','カフェ・喫茶','スイーツ','その他'];
+
+  // サンプル募集データ(デモ用)
+  const BOSYU=[
+    {id:1,d:'7/31',w:'金',title:'天満で焼き鳥はしご、しませんか',area:'天満',genre:'焼き鳥',size:'あと1名',who:'どなたでも',budget:'3,000〜5,000円',time:'19時ごろ〜',host:'たこやき係長(40代)',note:'2軒はしごする予定です。焼き鳥は塩派の方、大歓迎。',members:['たこやき係長(40代)'],comments:[{w:'こなもん先輩(30代)',t:'塩派です!気になっています。'},{w:'たこやき係長(40代)',t:'ぜひどうぞ。当日の目印はここで決めましょう。'}]},
+    {id:2,d:'8/2',w:'日',title:'三宮の老舗喫茶でモーニング',area:'三宮',genre:'カフェ・喫茶',size:'あと2名',who:'どなたでも',budget:'〜3,000円',time:'9時〜',host:'こなもん先輩(30代)',note:'朝からゆっくり喫茶店文化を楽しみたい方、ぜひ。',members:['こなもん先輩(30代)','おだしの人(40代)'],comments:[]},
+    {id:3,d:'8/7',w:'金',title:'河原町で夏の京料理を少人数で',area:'河原町',genre:'居酒屋',size:'あと1名',who:'同性のみ',budget:'5,000円〜',time:'18時半〜',host:'おばんざい部長(50代)',note:'鱧が美味しい季節です。静かに飲みたい方向け。',members:['おばんざい部長(50代)'],comments:[]},
+    {id:4,d:'8/8',w:'土',title:'福島の人気ラーメン、並びましょう',area:'福島',genre:'ラーメン',size:'あと3名',who:'どなたでも',budget:'〜3,000円',time:'11時集合',host:'替え玉主任(20代)',note:'並んでいる間のおしゃべりも含めて楽しみましょう。',members:['替え玉主任(20代)'],comments:[{w:'ホルモン監査役(40代)',t:'何分待ちくらいのお店ですか?'}]},
+    {id:5,d:'8/11',w:'火',title:'梅田で焼肉。食べる専門の方も歓迎',area:'梅田',genre:'焼肉',size:'あと2名',who:'どなたでも',budget:'5,000円〜',time:'19時〜',host:'ホルモン監査役(40代)',note:'焼くのは得意なので、お任せください。',members:['ホルモン監査役(40代)'],comments:[]}
+  ];
+
+  // デモ用サンプルプロフィール(本実装では全項目が登録ユーザーに公開される)
+  const PROFILES={
+    'たこやき係長(40代)':{g:'男性',genres:'焼き鳥・居酒屋・ラーメン',areas:'天満・梅田',slots:'平日夜・土日夜',sake:'飲む',tob:'どちらでも可',pay:'割り勘',intro:'粉もんと焼き鳥をこよなく愛しています。'},
+    'こなもん先輩(30代)':{g:'女性',genres:'カフェ・喫茶・スイーツ',areas:'三宮・元町',slots:'土日昼',sake:'少し',tob:'嫌煙',pay:'割り勘',intro:'喫茶店巡りが趣味です。'},
+    'おばんざい部長(50代)':{g:'女性',genres:'居酒屋・寿司',areas:'河原町・烏丸',slots:'平日夜',sake:'飲む',tob:'嫌煙',pay:'応相談',intro:'京都の旬を静かに楽しみたい派です。'},
+    '替え玉主任(20代)':{g:'男性',genres:'ラーメン・焼肉',areas:'福島・京橋',slots:'土日昼・土日夜',sake:'少し',tob:'嫌煙',pay:'割り勘',intro:'行列は得意です。'},
+    'ホルモン監査役(40代)':{g:'男性',genres:'焼肉・エスニック',areas:'梅田',slots:'平日夜',sake:'飲む',tob:'喫煙',pay:'多め負担',intro:'焼き係はお任せください。'},
+    'おだしの人(40代)':{g:'回答しない',genres:'うどん・そば',areas:'難波・心斎橋',slots:'平日昼',sake:'飲まない',tob:'嫌煙',pay:'割り勘',intro:'出汁のきいたうどんに目がありません。'}
+  };
+  window._kgProf=function(el){
+    const name=el.dataset.n;
+    document.getElementById('pm-name').textContent=name.replace(/「.*/,'');
+    const bd=document.getElementById('pm-body');
+    const key=name.replace(/「.*/,'').replace(/\/.*?\)/,')');
+    const p=PROFILES[key]||PROFILES[name];
+    if(name.indexOf('あなた')===0){
+      bd.innerHTML='<dd>「プロフィール」タブで設定した内容がここに表示されます。</dd>';
+    }else if(p){
+      bd.innerHTML='<dt>性別</dt><dd>'+p.g+'</dd><dt>好きなジャンル</dt><dd>'+p.genres+'</dd><dt>行きたいエリア</dt><dd>'+p.areas+'</dd><dt>参加しやすい時間</dt><dd>'+p.slots+'</dd><dt>お酒</dt><dd>'+p.sake+'</dd><dt>タバコ</dt><dd>'+p.tob+'</dd><dt>会計</dt><dd>'+p.pay+'</dd><dt>ひとこと</dt><dd>'+p.intro+'</dd>';
+    }else{
+      bd.innerHTML='<dd>(デモ)このユーザーのサンプルプロフィールは未登録です。</dd>';
+    }
+    document.getElementById('pmodal').hidden=false;
+  };
+  window._kgProfClose=function(){document.getElementById('pmodal').hidden=true;};
+
+  // ページ切替
+  const pages=document.querySelectorAll('.page');
+  const navBtns=document.querySelectorAll('nav.kg button');
+  function go(id){
+    pages.forEach(p=>p.classList.toggle('on',p.id==='page-'+id));
+    const navId=(id==='detail')?'list':id;
+    navBtns.forEach(b=>b.classList.toggle('on',b.dataset.page===navId));
+    document.querySelector('.kg-app').classList.toggle('graybg',id==='list');
+    window.scrollTo({top:0,behavior:'auto'});
+  }
+  navBtns.forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+  document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();go(el.dataset.go);}));
+
+  // チップ生成
+  function chips(el,items,type,name){
+    el.innerHTML=items.map(v=>'<label class="chip"><input type="'+type+'"'+(name?' name="'+name+'"':'')+' value="'+v+'"><span>'+v+'</span></label>').join('');
+  }
+  chips(document.getElementById('c-area'),AREAS,'radio','carea');
+  chips(document.getElementById('c-genre'),GENRES,'radio','cgenre');
+  chips(document.getElementById('p-genre'),GENRES,'checkbox');
+  chips(document.getElementById('p-area'),AREAS,'checkbox');
+
+  // 絞り込みタグ(カテゴリごとに1つ。タップでラジオが開き、選ぶと即反映)
+  const fsort=document.getElementById('f-sort');
+  const SLOTS=[
+    {k:'size',  v:null, def:'1',         name:'2人で行く'},
+    {k:'budget',v:null, def:'〜3,000円',  name:'〜3,000円'},
+    {k:'genre', v:null, def:'カフェ・喫茶', name:'カフェ・喫茶'},
+    {k:'area',  v:null, def:'梅田',       name:'梅田'}
+  ];
+  const OPTS={
+    size:[{v:'1',t:'2人で行く(あと1名)'},{v:'2+',t:'3人以上で行く'}],
+    budget:['〜3,000円','3,000〜5,000円','5,000円〜'].map(x=>({v:x,t:x})),
+    genre:GENRES.map(x=>({v:x,t:x})),
+    area:AREAS.map(x=>({v:x,t:x}))
+  };
+  const dispV=v=>v==='1'?'2人で行く':v==='2+'?'3人以上':v;
+  function clearF(){SLOTS.forEach(s=>s.v=null);}
+  let popEl=null,ovEl=null;
+  function closePicker(){if(popEl){popEl.remove();ovEl.remove();popEl=ovEl=null;}}
+  function openPicker(slot,anchor){
+    closePicker();
+    const cur=slot.v||slot.def;
+    ovEl=document.createElement('div');ovEl.className='pop-ov';ovEl.onclick=closePicker;
+    popEl=document.createElement('div');popEl.className='pop';
+    popEl.innerHTML=[{v:'',t:'指定なし(解除)'}].concat(OPTS[slot.k])
+      .map(o=>'<button class="'+(o.v===cur?'sel':'')+'" data-v="'+o.v+'"><span class="r"></span>'+o.t+'</button>').join('');
+    popEl.addEventListener('click',e=>{
+      const b=e.target.closest('button'); if(!b)return;
+      slot.v=b.dataset.v||null;
+      closePicker(); render();
+    });
+    document.body.appendChild(ovEl); document.body.appendChild(popEl);
+    const r=anchor.getBoundingClientRect();
+    let top=r.bottom+6;
+    if(top+popEl.offsetHeight>innerHeight-10)top=Math.max(10,innerHeight-popEl.offsetHeight-10);
+    let left=r.left;
+    if(left+popEl.offsetWidth>innerWidth-10)left=innerWidth-popEl.offsetWidth-10;
+    popEl.style.top=top+'px'; popEl.style.left=Math.max(10,left)+'px';
+  }
+
+  // ジャンル→イラスト対応
+  const ICON={'焼き鳥':'i-yakitori','焼肉':'i-yakiniku','寿司':'i-sushi','ラーメン':'i-ramen','うどん・そば':'i-udon','居酒屋':'i-izakaya','イタリアン':'i-italian','エスニック':'i-ethnic','カフェ・喫茶':'i-cafe','スイーツ':'i-sweets','その他':'i-other'};
+
+  // 募集人数の充足判定(あと◯名 → 主催者を除く承認済み人数が達したら募集終了)
+  function needOf(b){return b.size.indexOf('4')>-1?4:(parseInt(b.size.replace(/[^0-9]/g,''),10)||1);}
+  function isClosed(b){return (b.members.length-1)>=needOf(b);}
+
+  // 募集カード生成(共通)
+  function cardHTML(b){
+    return '<article class="bosyu">'+
+      '<div class="thumb" aria-hidden="true"><svg><use href="#'+(ICON[b.genre]||'i-izakaya')+'"/></svg></div>'+
+      '<div class="date"><b>'+b.d+'</b><span>('+b.w+') '+b.time+'</span></div>'+
+      '<div class="body"><h3 onclick="_kgOpen('+b.id+')">'+b.title+'</h3>'+
+        '<div class="tags">'+
+          '<span class="tag ai">'+b.area+'</span>'+
+          '<span class="tag">'+b.genre+'</span>'+
+          (isClosed(b)?'<span class="tag closed">募集終了</span>':'<span class="tag gold">'+b.size+'</span>')+
+          '<span class="tag">'+b.who+'</span>'+
+          '<span class="tag">'+b.budget+'</span>'+
+          '<span class="tag">'+b.host+'</span>'+
+        '</div></div>'+
+      '<div class="join"><button class="btn btn-ai" onclick="_kgOpen('+b.id+')">詳細を見る</button></div>'+
+    '</article>';
+  }
+
+  // 募集一覧描画
+  const list=document.getElementById('bosyu-list');
+  const newList=document.getElementById('new-bosyu');
+  function renderNew(){ newList.innerHTML=BOSYU.slice(0,3).map(cardHTML).join(''); }
+  const qwrap=document.getElementById('qchips');
+  function renderTags(){
+    const none=SLOTS.every(s=>!s.v);
+    qwrap.innerHTML='<button class="qchip'+(none?' on':'')+'" data-all="1">すべて</button>'+
+      SLOTS.map((s,i)=>'<button class="qchip'+(s.v?' on':'')+'" data-i="'+i+'">'+(s.v?dispV(s.v):s.name)+' ▾</button>').join('');
+  }
+  function render(){
+    const sel={size:null,budget:null,genre:null,area:null};
+    SLOTS.forEach(s=>{if(s.v)sel[s.k]=s.v;});
+    // 府県を選んだら配下のエリアもすべて対象にする
+    const PREF={
+      '大阪':['大阪','梅田','難波・心斎橋','天満','福島','京橋'],
+      '兵庫':['兵庫','三宮','元町'],
+      '京都':['京都','河原町','烏丸','伏見']
+    };
+    const areaOK=b=>!sel.area||(PREF[sel.area]?PREF[sel.area].includes(b.area):b.area===sel.area);
+    const rows=BOSYU.filter(b=>
+      areaOK(b)&&
+      (!sel.genre||b.genre===sel.genre)&&
+      (!sel.budget||b.budget===sel.budget)&&
+      (!sel.size||(sel.size==='1'?b.size==='あと1名':b.size!=='あと1名'))
+    );
+    // 並び替え
+    const bRank={'〜3,000円':0,'3,000〜5,000円':1,'5,000円〜':2};
+    const dk=b=>{const m=(b.d||'').match(/(\d+)\s*\/\s*(\d+)/);return m?(+m[1])*100+(+m[2]):9999;};
+    const sort=fsort.value;
+    if(sort==='date')rows.sort((x,y)=>dk(x)-dk(y));
+    else if(sort==='budget')rows.sort((x,y)=>(bRank[x.budget]??9)-(bRank[y.budget]??9));
+    else rows.sort((x,y)=>(y.id||0)-(x.id||0));
+    renderTags();
+    renderNew();
+    if(!rows.length){list.innerHTML='<div class="empty">条件に合う募集がまだありません。<br>「募集をつくる」から最初の一件を出してみませんか?</div>';return;}
+    list.innerHTML=rows.map(cardHTML).join('');
+  }
+  fsort.addEventListener('change',render);
+  qwrap.addEventListener('click',e=>{
+    const c=e.target.closest('.qchip'); if(!c)return;
+    if(c.dataset.all){clearF();closePicker();render();return;}
+    openPicker(SLOTS[+c.dataset.i],c);
+  });
+  render();
+
+  // ギャラリー → 募集一覧へ絞り込み遷移
+  document.querySelectorAll('.gallery .g').forEach(t=>t.addEventListener('click',()=>{
+    clearF(); SLOTS[2].v=t.dataset.genre;
+    render(); go('list');
+  }));
+
+  // ===== 募集詳細 =====
+  let CUR=null, REPLY_TO=null;
+  window._kgOpen=function(id){
+    const b=BOSYU.find(x=>x.id===id); if(!b)return;
+    CUR=b; REPLY_TO=null; drawDetail(); go('detail');
+  };
+  function ngCheck(t,msg){
+    if(!t){msg.textContent='内容を入力してください。';msg.className='form-msg ng';return false;}
+    if(/[0-9]{6,}|@|line|LINE|instagram|http/i.test(t)){msg.textContent='連絡先やIDらしき文字列は書けません。';msg.className='form-msg ng';return false;}
+    return true;
+  }
+  function drawDetail(){
+    const b=CUR;
+    b.pending=b.pending||[]; b.dms=b.dms||[];
+    const isHost=b.host==='あなた';
+    const joined=b.members.includes('あなた');
+    const waiting=b.pending.includes('あなた');
+    const closed=isClosed(b);
+    const sizeTag=closed?'<span class="tag closed">募集終了</span>':'<span class="tag gold">'+b.size+'</span>';
+
+    let joinArea='';
+    if(isHost){
+      joinArea=closed
+        ?'<p class="hint2" style="margin-top:16px">定員に達したため、この募集は終了しました。未対応の参加希望には自動で見送りが通知されます。</p>'
+        :'<p class="hint2" style="margin-top:16px">あなたが主催の募集です。参加希望が届くと下に表示されます。定員に達すると募集は自動で終了します。</p>';
+      if(!closed&&b.pending.length){
+        joinArea+='<h4 class="d-sub">参加希望(承認待ち:'+b.pending.length+'名)</h4>'+
+          b.pending.map((p,i)=>'<div class="pend"><span class="tag">'+p+'</span>'+
+            '<button class="btn btn-ai" style="padding:8px 18px" onclick="_kgApprove('+i+')">承認する</button>'+
+            '<button class="btn btn-ghost" style="padding:8px 18px" onclick="_kgDecline('+i+')">見送る</button></div>').join('')+
+          '<p class="hint2">相手のプロフィール(年代・お酒・タバコ・会計・自己紹介)を確認してから判断できます。見送っても相手に理由は通知されません。</p>';
+      }
+    }else if(joined){
+      joinArea='<p style="margin-top:16px"><button class="btn btn-ghost" disabled>参加が承認されました。当日はお店の前で!</button></p>';
+    }else if(closed){
+      joinArea='<p style="margin-top:16px"><button class="btn btn-ghost" disabled>この募集は終了しました</button></p>';
+    }else if(waiting){
+      joinArea='<p style="margin-top:16px"><button class="btn btn-ghost" disabled>承認待ち(主催者が確認しています)</button></p>';
+    }else{
+      joinArea='<p style="margin-top:16px"><button class="btn btn-ai" onclick="_kgJoin()">この募集に参加を表明する</button></p>'+
+        '<p class="hint2">参加表明すると、あなたのプロフィール(年代・お酒・タバコ・会計・自己紹介)が主催者に表示され、承認されると参加確定です。</p>';
+    }
+
+    const dmArea='<h4 class="d-sub">主催者にDMで確認する</h4>'+
+      '<p class="hint2">DMは主催者とあなただけに表示されます。公開コメントに書きにくい確認(禁煙のお店かどうか、など)はこちらで。連絡先の交換はDMでもできません。</p>'+
+      (b.dms.length?'<div class="c-list" style="margin:10px 0">'+b.dms.map(m=>'<div class="c-item dm"><b>'+m.w+'</b><p>'+m.t+'</p></div>').join('')+'</div>':'')+
+      '<div class="c-form"><textarea id="dm-text" maxlength="200" placeholder="例)禁煙のお店ですか?"></textarea>'+
+      '<div class="form-msg" id="dm-msg" role="status"></div>'+
+      '<button class="btn btn-ghost" onclick="_kgDm()">DMを送る</button></div>';
+
+    function cmt(c,i){
+      return '<div class="c-item"><b class="p-link" data-n="'+c.w+'" onclick="_kgProf(this)">'+c.w+'</b><p>'+c.t+'</p>'+
+        ((c.replies&&c.replies.length)?c.replies.map(r=>'<div class="c-reply"><b class="p-link" data-n="'+r.w+'" onclick="_kgProf(this)">'+r.w+'</b><p>'+r.t+'</p></div>').join(''):'')+
+        '<button class="reply-btn" onclick="_kgReply('+i+')">↳ このコメントに返信する</button>'+
+      '</div>';
+    }
+    const replying=(REPLY_TO!==null&&b.comments[REPLY_TO]);
+
+    document.getElementById('detail-body').innerHTML=
+      '<button class="btn btn-ghost" style="padding:8px 18px" onclick="_kgBack()">← 募集一覧にもどる</button>'+
+      '<div class="d-head">'+
+        '<div class="thumb big" aria-hidden="true"><svg><use href="#'+(ICON[b.genre]||'i-other')+'"/></svg></div>'+
+        '<div><h3>'+b.title+'</h3>'+
+          '<div class="tags"><span class="tag ai">'+b.area+'</span><span class="tag">'+b.genre+'</span>'+sizeTag+'<span class="tag">'+b.who+'</span></div>'+
+        '</div>'+
+      '</div>'+
+      '<dl class="d-info">'+
+        '<dt>日どり</dt><dd>'+b.d+(b.w?'('+b.w+')':'')+' '+b.time+'</dd>'+
+        '<dt>エリア</dt><dd>'+b.area+'</dd>'+
+        '<dt>ジャンル</dt><dd>'+b.genre+'</dd>'+
+        '<dt>募集人数</dt><dd>'+b.size+'</dd>'+
+        '<dt>参加できる人</dt><dd>'+b.who+'</dd>'+
+        '<dt>予算のめやす</dt><dd>'+b.budget+'</dd>'+
+        '<dt>主催</dt><dd>'+b.host+'</dd>'+
+      '</dl>'+
+      (b.note?'<p class="d-note">'+b.note+'</p>':'')+
+      '<h4 class="d-sub">参加メンバー('+b.members.length+'名)</h4>'+
+      '<div class="tags">'+b.members.map((m,i)=>'<span class="tag'+(i===0?' ai':'')+' p-link" data-n="'+m+'" onclick="_kgProf(this)">'+m+(i===0?' [主催]':'')+'</span>').join('')+'</div>'+
+      '<p class="hint2">名前をタップするとプロフィールを見られます。</p>'+
+      '<div class="agree" style="margin-top:18px"><span>当日は<b>お店の前で現地集合</b>です。連絡先の交換は不要。目印(服装・持ち物など)はコメント欄で決めてください。</span></div>'+
+      joinArea+
+      dmArea+
+      '<h4 class="d-sub">コメント('+b.comments.length+')</h4>'+
+      '<p class="hint2">コメントは参加者以外にも公開されます。</p>'+
+      '<div class="c-list">'+(b.comments.length?b.comments.map(cmt).join(''):'<p class="hint2">まだコメントはありません。気になることを聞いてみましょう。</p>')+'</div>'+
+      '<div class="c-form">'+
+        (replying?'<p class="hint2">↳ '+b.comments[REPLY_TO].w+' さんのコメントに返信中 <button class="report" onclick="_kgReply(null)">取り消す</button></p>':'')+
+        '<textarea id="d-text" maxlength="200" placeholder="'+(replying?'返信を入力':'質問や当日の目印など(連絡先・SNSのIDは書けません)')+'"></textarea>'+
+        '<div class="form-msg" id="d-msg" role="status"></div>'+
+        '<button class="btn btn-ai" onclick="_kgSend()">'+(replying?'返信する':'コメントする')+'</button>'+
+      '</div>'+
+      '<p style="margin-top:22px;text-align:right"><button class="report" onclick="alert(\'(デモ)運営に通報しました。内容を確認して対応します。\')">⚑ この募集を通報する</button></p>';
+  }
+  window._kgBack=function(){go('list')};
+  window._kgJoin=function(){
+    if(!CUR)return;
+    if(!CUR.pending.includes('あなた'))CUR.pending.push('あなた');
+    drawDetail();
+  };
+  window._kgApprove=function(i){
+    if(!CUR)return;
+    CUR.members.push(CUR.pending[i]); CUR.pending.splice(i,1);
+    if(isClosed(CUR))CUR.pending=[]; // 定員到達で募集終了、残りは自動見送り
+    render(); drawDetail();
+  };
+  window._kgDecline=function(i){
+    if(!CUR)return;
+    CUR.pending.splice(i,1); drawDetail();
+  };
+  window._kgDm=function(){
+    const t=document.getElementById('dm-text').value.trim();
+    const msg=document.getElementById('dm-msg');
+    if(!ngCheck(t,msg))return;
+    CUR.dms.push({w:'あなた',t:t}); drawDetail();
+  };
+  window._kgReply=function(i){ REPLY_TO=i; drawDetail(); };
+  window._kgSend=function(){
+    const t=document.getElementById('d-text').value.trim();
+    const msg=document.getElementById('d-msg');
+    if(!ngCheck(t,msg))return;
+    if(REPLY_TO!==null&&CUR.comments[REPLY_TO]){
+      const c=CUR.comments[REPLY_TO];
+      (c.replies=c.replies||[]).push({w:'あなた',t:t});
+      REPLY_TO=null;
+    }else{
+      CUR.comments.push({w:'あなた',t:t});
+    }
+    drawDetail();
+  };
+
+  // ===== ログイン/新規登録(デモ) =====
+  const okMail=v=>/.+@.+\..+/.test(v);
+  document.getElementById('l-submit').addEventListener('click',()=>{
+    const m=document.getElementById('l-mail').value.trim(),p=document.getElementById('l-pass').value,msg=document.getElementById('l-msg');
+    if(!okMail(m)){msg.textContent='メールアドレスの形式を確認してください。';msg.className='form-msg ng';return;}
+    if(p.length<8){msg.textContent='パスワードは8文字以上です。';msg.className='form-msg ng';return;}
+    msg.textContent='(デモ)ログインしました。';msg.className='form-msg ok';
+  });
+  document.getElementById('s-submit').addEventListener('click',()=>{
+    const m=document.getElementById('s-mail').value.trim();
+    const p=document.getElementById('s-pass').value,p2=document.getElementById('s-pass2').value;
+    const a=document.getElementById('s-age18').checked,msg=document.getElementById('s-msg');
+    if(!okMail(m)){msg.textContent='メールアドレスの形式を確認してください。';msg.className='form-msg ng';return;}
+    if(p.length<8){msg.textContent='パスワードは8文字以上にしてください。';msg.className='form-msg ng';return;}
+    if(p!==p2){msg.textContent='パスワード(確認)が一致しません。';msg.className='form-msg ng';return;}
+    if(!a){msg.textContent='18歳以上であることの確認と規約への同意が必要です。';msg.className='form-msg ng';return;}
+    msg.textContent='(デモ)登録が完了しました。「プロフィール」タブで自己紹介を設定しましょう。';msg.className='form-msg ok';
+  });
+
+  // 募集作成(デモ)
+  document.getElementById('c-submit').addEventListener('click',()=>{
+    const msg=document.getElementById('c-msg');
+    const title=document.getElementById('c-title').value.trim();
+    const area=document.querySelector('input[name=carea]:checked');
+    const genre=document.querySelector('input[name=cgenre]:checked');
+    const date=document.getElementById('c-date').value.trim();
+    if(!title||!area||!genre||!date){msg.textContent='タイトル・エリア・ジャンル・日どりを入力してください。';msg.className='form-msg ng';return;}
+    const size=document.querySelector('input[name=size]:checked').value;
+    const who=document.querySelector('input[name=who]:checked').value;
+    const budget=document.querySelector('input[name=budget]:checked').value;
+    const note=document.getElementById('c-note').value.trim();
+    BOSYU.unshift({id:Date.now(),d:date.split('(')[0]||date,w:'',title:title,area:area.value,genre:genre.value,size:size,who:who,budget:budget,time:'',host:'あなた',note:note,members:['あなた'],comments:[],dms:[],pending:['替え玉主任(20代/お酒:少し/嫌煙/割り勘)「行列は得意です。よろしくお願いします」']});
+    render();
+    msg.textContent='(デモ)募集を掲載しました。詳細ページにサンプルの参加希望者が届いています。承認/見送りを試してみてください。';msg.className='form-msg ok';
+  });
+
+  // プロフィール登録(デモ・18歳チェック必須)
+  document.getElementById('p-submit').addEventListener('click',()=>{
+    const msg=document.getElementById('p-msg');
+    const name=document.getElementById('p-name').value.trim();
+    const age18=document.getElementById('p-age18').checked;
+    const intro=document.getElementById('p-intro').value;
+    if(!name){msg.textContent='ニックネームを入力してください。';msg.className='form-msg ng';return;}
+    if(/[0-9]{6,}|@|line|LINE|instagram|http/i.test(intro)){msg.textContent='自己紹介に連絡先やIDらしき文字列は書けません。';msg.className='form-msg ng';return;}
+    if(!age18){msg.textContent='18歳以上であることの確認と規約への同意が必要です。';msg.className='form-msg ng';return;}
+    msg.textContent='(デモ)登録が完了しました。「募集をさがす」からごはんの仲間をさがせます。';msg.className='form-msg ok';
+  });
+})();
+</script>
 </body>
 </html>

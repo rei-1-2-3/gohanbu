@@ -1,4 +1,7 @@
 .env
 .env.*
+!.env.local.example
 node_modules/
+dist/
 supabase/.temp/
+.supabase-token
