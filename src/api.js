@@ -110,6 +110,19 @@ export async function createRecruitment(recruitment) {
   return data;
 }
 
+// 主催者による募集の編集(承認済み参加者がいない場合のみ。DBのBEFORE UPDATEトリガー
+// prevent_edit_with_approved_applicantsでも二重に担保。supabase/migrations/20260722000003参照)
+export async function updateRecruitment(id, updates) {
+  const { data, error } = await supabase
+    .from('recruitments')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 // 主催者による募集の取り消し(承認済み参加者がいない場合のみ。DBトリガーでも二重に担保)。
 // 物理削除ではなくstatus='cancelled'への更新とし、マイページの履歴に残す
 export async function cancelRecruitment(id) {

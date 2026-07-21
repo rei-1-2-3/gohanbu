@@ -3,7 +3,7 @@ import { supabase } from './lib/supabaseClient.js';
 import { signUp, signIn, signOut, resetPassword, getSession, onAuthStateChange, takeAgreedAt, clearAgreedAt, DuplicateEmailError } from './auth.js';
 import {
   getMyProfile, getProfile, createProfile, updateProfile, DuplicateNicknameError,
-  listRecruitments, getRecruitment, createRecruitment, cancelRecruitment,
+  listRecruitments, getRecruitment, createRecruitment, updateRecruitment, cancelRecruitment,
   listMyRecruitments, listMyApplications, listApplicationsForHost, listCommentsForHost,
   listApplications, getMyApplication, applyToRecruitment, approveApplication, declineApplication, cancelApplication,
   sendDm, withdrawAccount,
@@ -16,6 +16,7 @@ let session = null;
 let myProfile = null;
 let allRecruitments = [];
 let currentDetailId = null;
+let editingRecruitmentId = null;
 
 const NG_PATTERN = /[0-9]{6,}|@|line|instagram|http|tiktok|x\.com|twitter/i;
 function hasNgWord(t) { return NG_PATTERN.test(t || ''); }
@@ -75,7 +76,10 @@ function go(id) {
   if (id === 'admin') renderAdminPage();
   if (id === 'auth') initAuthForm();
 }
-navBtns.forEach(b => b.addEventListener('click', () => go(b.dataset.page)));
+navBtns.forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.page === 'create') resetCreateForm();
+  go(b.dataset.page);
+}));
 document.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); go(el.dataset.go); }));
 
 // ===== チップ生成(募集作成・プロフィール) =====
@@ -311,8 +315,9 @@ async function openDetail(id) {
       <h3 style="margin-top:18px">承認待ちの応募${pending.length ? `(${pending.length}件)` : ''}</h3>
       ${pending.length ? pending.map(applicantCardHTML).join('') : '<p class="hint2">承認待ちの応募はまだありません。</p>'}
       <div style="margin-top:12px">
+        <button class="btn btn-ghost" id="d-edit-recruit" ${(approved.length || cancelled) ? 'disabled' : ''}>編集する</button>
         <button class="btn btn-ghost" id="d-cancel-recruit" ${(approved.length || cancelled) ? 'disabled' : ''} style="color:#B23A2B">募集を取り消す</button>
-        ${approved.length ? '<p class="hint2">承認済みの参加者がいるため取り消せません(約束を守るため)。</p>' : ''}
+        ${approved.length ? '<p class="hint2">承認済みの参加者がいるため編集・取り消しができません(約束を守るため)。</p>' : ''}
         ${cancelled ? '<p class="hint2">この募集はすでに取り消し済みです。</p>' : ''}
       </div>
     `;
@@ -383,6 +388,8 @@ async function openDetail(id) {
     try { await declineApplication(+b.dataset.appDecline); openDetail(id); }
     catch (err) { alert('見送りに失敗しました: ' + (err.message || err)); }
   }));
+  const editRecruitBtn = document.getElementById('d-edit-recruit');
+  if (editRecruitBtn) editRecruitBtn.addEventListener('click', () => startEditRecruitment(r));
   const cancelRecruitBtn = document.getElementById('d-cancel-recruit');
   if (cancelRecruitBtn) cancelRecruitBtn.addEventListener('click', async () => {
     if (!confirm('この募集を取り消しますか?')) return;
@@ -450,9 +457,41 @@ window._kgProfClose = function () { document.getElementById('pmodal').hidden = t
 document.getElementById('pmodal').addEventListener('click', (e) => { if (e.target.id === 'pmodal') window._kgProfClose(); });
 document.querySelector('.pmodal-close').addEventListener('click', window._kgProfClose);
 
-// ===== 募集作成 =====
+// ===== 募集作成・編集(同じフォームを使い回す) =====
+const createHeading = document.querySelector('#page-create h2');
+const createSubmitBtn = document.getElementById('c-submit');
+
+function resetCreateForm() {
+  editingRecruitmentId = null;
+  document.getElementById('form-create').reset();
+  createHeading.textContent = '募集をつくる';
+  createSubmitBtn.textContent = 'この内容で募集する';
+}
+function sizeValueForCapacity(capacity) {
+  return capacity >= 4 ? 'あと4名以上' : `あと${capacity}名`;
+}
+// 主催者が「編集する」を押したときに、既存の募集内容をフォームへ流し込んで編集モードにする
+// (承認済み参加者がいない募集のみ呼ばれる。ボタン自体がそれ以外では無効化されている)
+function startEditRecruitment(r) {
+  editingRecruitmentId = r.id;
+  document.getElementById('c-title').value = r.title;
+  setRadio('carea', r.area);
+  setRadio('cgenre', r.genre);
+  document.getElementById('c-event-date').value = r.event_date || '';
+  document.getElementById('c-date').value = r.event_at || '';
+  setRadio('size', sizeValueForCapacity(r.capacity));
+  setRadio('who', r.who);
+  setRadio('budget', r.budget);
+  document.getElementById('c-note').value = r.note || '';
+  const msg = document.getElementById('c-msg');
+  msg.textContent = ''; msg.className = 'form-msg';
+  createHeading.textContent = '募集を編集する';
+  createSubmitBtn.textContent = 'この内容で更新する';
+  go('create');
+}
 document.getElementById('c-submit').addEventListener('click', async () => {
   const msg = document.getElementById('c-msg');
+  const isEdit = !!editingRecruitmentId;
   if (!session) { msg.textContent = 'ログインが必要です。'; msg.className = 'form-msg ng'; return; }
   if (!myProfile) { msg.textContent = '先に「プロフィール」タブでプロフィールを登録してください。'; msg.className = 'form-msg ng'; return; }
   const title = document.getElementById('c-title').value.trim();
@@ -469,16 +508,27 @@ document.getElementById('c-submit').addEventListener('click', async () => {
   const note = document.getElementById('c-note').value.trim();
   if (hasNgWord(note)) { msg.textContent = 'ひとことに連絡先やIDらしき文字列は書けません。'; msg.className = 'form-msg ng'; return; }
   try {
-    await createRecruitment({
-      host_id: session.user.id, title, area: area.value, genre: genre.value,
-      event_at: date, event_date: eventDate, capacity, who, budget, note: note || null,
-    });
-    msg.textContent = '募集を掲載しました。'; msg.className = 'form-msg ok';
-    document.getElementById('form-create').reset();
-    go('list');
+    if (isEdit) {
+      const editedId = editingRecruitmentId;
+      await updateRecruitment(editedId, {
+        title, area: area.value, genre: genre.value,
+        event_at: date, event_date: eventDate, capacity, who, budget, note: note || null,
+      });
+      msg.textContent = '募集を更新しました。'; msg.className = 'form-msg ok';
+      resetCreateForm();
+      openDetail(editedId);
+    } else {
+      await createRecruitment({
+        host_id: session.user.id, title, area: area.value, genre: genre.value,
+        event_at: date, event_date: eventDate, capacity, who, budget, note: note || null,
+      });
+      msg.textContent = '募集を掲載しました。'; msg.className = 'form-msg ok';
+      resetCreateForm();
+      go('list');
+    }
   } catch (err) {
     console.error(err);
-    msg.textContent = '登録に失敗しました: ' + (err.message || err); msg.className = 'form-msg ng';
+    msg.textContent = (isEdit ? '更新' : '登録') + 'に失敗しました: ' + (err.message || err); msg.className = 'form-msg ng';
   }
 });
 
